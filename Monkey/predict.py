@@ -11,11 +11,16 @@ def predict(Theta1, Theta2, X):
     X = X.T
     one = np.ones((1,1))
     X1 = np.bmat("one; X")
-    
+
     Z2 = Theta1 * X1
     for i in Z2:
         i[0, 0] = sigmoid(i[0, 0])
     A2 = np.bmat("one; Z2")
+
+    print npfunc.shape(Theta2)
+    print npfunc.shape(A2)
+    print "#####################"
+
     
     Z3 = Theta2 * A2
     for i in Z3:

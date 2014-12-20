@@ -15,11 +15,12 @@ import numpy.core.fromnumeric as npfunc
 
 import Image
 import shownum as sn
-for i in range(10):
-    im = sn.createImg(X[i*500])
-    im.show()
+#for i in range(10):
+#    im = sn.createImg(X[i*500])
+#    im.show()
 
-theta = spio.loadmat('ex3weights.mat')
+#theta = spio.loadmat('ex3weights.mat')
+theta = spio.loadmat('finally.mat')
 Theta1 = np.mat(theta['Theta1'])
 Theta2 = np.mat(theta['Theta2'])
 
@@ -31,6 +32,7 @@ root.geometry('500x500')
 cv = Canvas(root, width=400, height=400, bg="black")
 buttonFin = Button(root, text="Finish")
 buttonClear = Button(root, text="Clear")
+buttonSave = Button(root, text="Save")
 
 class usrPixel:
     def __init__(self, col, obj):
@@ -52,35 +54,27 @@ def usrDraw(event):
         x1 = x 
         y1 = y
         if (usrPixmap[y1*20+x1].color < 255):
-            usrPixmap[y1*20+x1].color = 230;
+            usrPixmap[y1*20+x1].color = 255;
             cv.itemconfig(usrPixmap[x1*20+y1].object, fill='white')
-        x1 = x - 1
-        y1 = y
-        if (x1 >=0 and usrPixmap[y1*20+x1].color < 155):
-            usrPixmap[y1*20+x1].color = 155;
-            cv.itemconfig(usrPixmap[x1*20+y1].object, fill='grey')
-        x1 = x 
-        y1 = y - 1
-        if (y1 >= 0 and usrPixmap[y1*20+x1].color < 155):
-            usrPixmap[y1*20+x1].color = 155;
-            cv.itemconfig(usrPixmap[x1*20+y1].object, fill='grey')
-        x1 = x + 1
-        y1 = y
-        if (x1 < 20 and usrPixmap[y1*20+x1].color < 155):
-            usrPixmap[y1*20+x1].color = 155;
-            cv.itemconfig(usrPixmap[x1*20+y1].object, fill='grey')
-        x1 = x 
-        y1 = y + 1
-        if (y1 < 20 and usrPixmap[y1*20+x1].color < 155):
-            usrPixmap[y1*20+x1].color = 155;
-            cv.itemconfig(usrPixmap[x1*20+y1].object, fill='grey')
+    
+savemat = {}
+savepic3 = []
+def usrSave(event):
+    print len(savepic3)
+    savemat['X'] = savepic3
+    spio.savemat('test2.mat', savemat)
     
 def usrFinish(event):
     print "Finish"
     import predict as pd
     tmp = np.zeros((1, 400))
+    tmppic = []
     for p in range(400):
         tmp[0, p] = usrPixmap[p].color/255.0
+        tmppic.append(usrPixmap[p].color/255)
+    savepic3.append(tmppic)
+    print "Now: ", len(savepic3)
+#    print savepic3
 #    raw = spio.loadmat('ex3data1.mat')
 #    X = np.mat(raw['X'])
 #    pd.predict(Theta1, Theta2, X[600])
@@ -89,6 +83,7 @@ def usrFinish(event):
 cv.bind('<B1-Motion>', usrDraw)
 buttonFin.bind('<Button-1>', usrFinish)
 buttonClear.bind('<Button-1>', usrClear)
+buttonSave.bind('<Button-1>', usrSave)
 
 for i in range(20):
     for j in range(20):
@@ -98,6 +93,7 @@ for i in range(20):
 cv.pack()
 buttonFin.pack()
 buttonClear.pack()
+buttonSave.pack()
 
 
 root.mainloop()
