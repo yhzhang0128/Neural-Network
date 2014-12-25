@@ -9,6 +9,6 @@ def createImg(vec):
     draw = ImageDraw.Draw(im)
     for i in range(20):
         for j in range(20):
-            idx = i*pixl+j
-            draw.rectangle((i*pixl, j*pixl, i*pixl+pixl, j*pixl+pixl), fill=255*vec[0,idx])
+            idx = j*20+i
+            draw.rectangle((i*pixl, j*pixl, i*pixl+pixl, j*pixl+pixl), fill=255*vec[idx])
     return im

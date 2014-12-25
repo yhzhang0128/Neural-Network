@@ -2,16 +2,17 @@
 # Filename:
 #     main.py
 # Description:
-#     The main script of "Monkey Read Numbers"
+#     Main Script of "Monkey read numbers"
 # Contributor:
-#       Yunhao Zhang          zhangyunh@gmail.com
+#       Yunhao Zhang        zhangyunh@gmail.com
 # Version: 1.0
+# Last Modified: Dec 25th, 2014
 
 import MainWindow as MW
 
 def main():
     win = MW.MainWindow()
     win.show()
-    
-if __name__ == "__main__":
+
+if __name__== "__main__":
     main()

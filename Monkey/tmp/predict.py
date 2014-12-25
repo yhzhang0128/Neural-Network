@@ -6,8 +6,6 @@ def sigmoid(z):
     return 1.0 / (1.0 + math.exp(-z));
 
 def predict(Theta1, Theta2, X):
-#    print npfunc.shape(X)
-#    return 0
     X = X.T
     one = np.ones((1,1))
     X1 = np.bmat("one; X")
@@ -17,14 +15,11 @@ def predict(Theta1, Theta2, X):
         i[0, 0] = sigmoid(i[0, 0])
     A2 = np.bmat("one; Z2")
 
-   print npfunc.shape(Theta2)
-    print npfunc.shape(A2)
-    print "#####################"
-
     
     Z3 = Theta2 * A2
+    ret = list()
     for i in Z3:
-        print i, sigmoid(i)
+        ret.append(sigmoid(i))
         i[0, 0] = sigmoid(i[0, 0]) 
-    print npfunc.shape(Theta2), npfunc.shape(A2)
-
+    
+    return ret

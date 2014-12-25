@@ -10,14 +10,14 @@ def sigmoid(z):
         for j in range(y):
             ret[i,j] = 1.0 / (1.0 + np.exp(-z[i,j]))
     return ret
-    
+
 def eachlog(z):
     ret = []
     for i in z:
         ret.append(np.log(i))
     ret = np.array(ret)
     return ret
-    
+
 def sigmoidGradient(z):
     term1 = 1.0 / (1.0 + np.exp(-z))
     return term1 * (1-term1)
@@ -133,12 +133,12 @@ def nnCostFunction(Theta,
     
     grad = np.array(grad)
 
-    print "J: ", J
+    print "Cost: ", J
     return (J, grad)
     
-def train():    
+def train(trace):    
     import scipy.io as spio
-    raw = spio.loadmat('full234.mat')
+    raw = spio.loadmat(trace)
     
     # Optimize function parameters
     input_layer_size = 400
@@ -172,5 +172,4 @@ def train():
     total = {'Theta1':Theta1, 'Theta2':Theta2}
 
     spio.savemat('finally.mat', total)
-    
-train()
+

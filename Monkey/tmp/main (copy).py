@@ -20,7 +20,7 @@ import shownum as sn
 #    im.show()
 
 #theta = spio.loadmat('ex3weights.mat')
-theta = spio.loadmat('234.mat')
+theta = spio.loadmat('finally.mat')
 Theta1 = np.mat(theta['Theta1'])
 Theta2 = np.mat(theta['Theta2'])
 

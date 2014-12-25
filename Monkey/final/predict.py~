@@ -2,8 +2,9 @@
 # Filename:
 #     predict.py
 # Description:
-#     This file uses NN parameters Theta1 and Theta2 to give 
-# prediction for a test trace X
+#     This file contains function predict which gives the result with
+# given NN parameters and test example vector(In this case is a vecotr
+# of length 400(20*20))
 
 import math
 import numpy as np
@@ -17,19 +18,17 @@ def predict(Theta1, Theta2, X):
     X = X.T
     one = np.ones((1,1))
     X1 = np.bmat("one; X")
-
-    # sigmoid of Hidden Layer
+    # Hidden Layer sigmoid
     Z2 = Theta1 * X1
     for i in Z2:
         i[0, 0] = sigmoid(i[0, 0])
     A2 = np.bmat("one; Z2")
 
-    # from Hidden Layer to Output Layer    
+    # from Hidden Layer to Output Layer
     Z3 = Theta2 * A2
     ret = list()
     for i in Z3:
         ret.append(sigmoid(i))
-        i[0, 0] = sigmoid(i[0, 0])
-
-    # return the Output Layer vector    
+        i[0, 0] = sigmoid(i[0, 0]) 
+    
     return ret

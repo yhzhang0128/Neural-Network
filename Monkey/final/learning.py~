@@ -2,15 +2,17 @@
 # Filename:
 #     learning.py
 # Description:
-#     This file contains all functions for training a Neural Network
+#    This file contains the main functions for the Neural Network
+# to learn from the samples and calculate the two Theta vector for
+# the NN.
 
 import os
 import numpy as np
 import scipy.io as spio
 import numpy.core.fromnumeric as npfunc
 
-# Sigmoid function for a vector
-#    sigmoid(x) = 1 / (1 + e^(-x))
+# Sigmoid Function
+#     sigmoid(x) = 1/(1+e^(-x))
 def sigmoid(z):
     x, y = npfunc.shape(z)
     ret = np.zeros((x, y))
@@ -19,12 +21,12 @@ def sigmoid(z):
             ret[i,j] = 1.0 / (1.0 + np.exp(-z[i,j]))
     return ret
 
-# Sigmoid Gradient for a peticular number
+# Gradient function of sigmoid
 def sigmoidGradient(z):
     term1 = 1.0 / (1.0 + np.exp(-z))
     return term1 * (1-term1)
 
-# Log Function for a vector
+# Count log(z[i]) for every element in z
 def eachlog(z):
     ret = []
     for i in z:
@@ -32,24 +34,27 @@ def eachlog(z):
     ret = np.array(ret)
     return ret
 
-# Function of cost and gradient for fmin_l_bfgs_b
-# def nnCostFunction(Theta,
-#                   input_layer_size,    
-#                   hidden_layer_size,   
-#                   num_labels,          
-#                   X, y, lambda1)
+# Neural Network Cost Function
+# Function for fmin_l_bfgs_b to optimize the Neural Network
+# 
+# nnCostFunction(Theta,
+#                input_layer_size,    
+#                hidden_layer_size,   
+#                num_labels,          
+#                X, y, lambda1)
 #
-#       Theta:  a Combination vector of Theta1 and Theta2
-#       input_layer_size:  in this case is 400(20*20)
-#       hidden_layer_size:  in this case I choose 25
-#       num_laybels:  output layer size which is 10 (10 numbers)
-#       X:  training example vector
-#       y:  correct answer for training example
-#       lambda:  parameter for regularization
+#       Theta: initial Theta(combination of Theta1 and Theta2)
+#       input_layer_size: In this case is 400(20*20)
+#       hidden_layer_size: In this case I choose 25
+#       num_labels: output_layer size, is 10
+#       X: The training examples
+#       y: Correct answer to trainging examples
+#       lambda1: arg for normalization
+# 
 #
 #       return a tuple (J, grad(1:n))
-#           where J is the cost with parameter Theta
-#           and   grad is the gradient vector of Theta       
+#           where J is the cost function under Theta and 
+#                 grad(1:n) is the gradient of Theta
 
 def nnCostFunction(Theta,
                    input_layer_size,    
@@ -64,7 +69,7 @@ def nnCostFunction(Theta,
     Theta2 = Theta[Theta1_sz:].reshape(hidden_layer_size + 1, num_labels)
     Theta2 = Theta2.T
 
-    # There are m samples    
+    # There are m training examples
     m = npfunc.shape(X)[0]
     
     # Objects to return   (Cost and Gradient)
@@ -77,7 +82,8 @@ def nnCostFunction(Theta,
     X = np.bmat('tmp X')
 
     # Count Cost J
-    a2 = np.copy(sigmoid(Theta1 * X.T))    
+    a2 = np.copy(sigmoid(Theta1 * X.T))
+    
     a2m = npfunc.shape(a2)[1]
     tmp = np.ones((1, a2m))
     a2 = np.bmat('tmp ; a2')
@@ -149,7 +155,7 @@ def nnCostFunction(Theta,
 
     J = J + reg * lambda1 / (2*m)
 
-    # Combine Theta1_grad and Theta2_grad into grad
+    # Combine gradTheta1 and gradTheta2 into one vector
     grad = []
     for j in range(input_layer_size + 1):
         for i in range(hidden_layer_size):
@@ -157,17 +163,19 @@ def nnCostFunction(Theta,
 
     for j in range(hidden_layer_size + 1):
         for i in range(num_labels):
-            grad.append(Theta2_grad[i,j])    
+            grad.append(Theta2_grad[i,j])
     grad = np.array(grad)
 
     print "Cost: ", J
     return (J, grad)
 
-
 # Training Function
-# This function train the NN with parameters in file trace
-# and output the result into file dest. Both trace and dest
-# is .mat format which also adapts Matlab    
+#     train the NN with a given set of training
+# examples in file trace and save the Theta1 and 
+# Theta2 after training to file dest
+#   trace and dest are "*.mat" which also adapt
+# to Matlab scripts
+
 def train(trace, dest):    
     import scipy.io as spio
     raw = spio.loadmat(trace)
@@ -189,12 +197,12 @@ def train(trace, dest):
         Theta.append(random() * eposilon_init*2 - eposilon_init)
     Theta = np.array(Theta)
     
-    # Use BFGS algorithm to optimize the NN parameters
-    # BFGS is provided in scipy
+    # Use BFGS algorithm to optimize the Neural Network parameters
+    # BFGS is provided in scipy  
     from scipy.optimize import fmin_l_bfgs_b
     result = fmin_l_bfgs_b(nnCostFunction, Theta, None, (input_layer_size, hidden_layer_size, num_labels, X, y, lambda1))
 
-    # Extract Theta1 and Theta2 form result
+    # Extract Theta1 and Theta2 from result
     Theta = result[0]
     Theta1_sz = hidden_layer_size * (input_layer_size + 1)
     Theta1 = Theta[:Theta1_sz].reshape(input_layer_size+1, hidden_layer_size)
@@ -203,7 +211,7 @@ def train(trace, dest):
     Theta2 = Theta[Theta1_sz:].reshape(hidden_layer_size + 1, num_labels)
     Theta2 = Theta2.T
 
-    # Save Theta1 and Theta2 into dest (a .mat file)
+    # Save the parameters into .mat file dest
     total = {'Theta1':Theta1, 'Theta2':Theta2}
     spio.savemat(dest, total)
 
